@@ -5,6 +5,8 @@ Generate a report based on the ClinVar variant database.
 
 This code is a slightly modified and stand alone version of the report generation from the [Genevieve](https://github.com/PersonalGenomesOrg/genevieve) project.
 
+---
+
 Getting Started
 ----
 
@@ -37,6 +39,8 @@ report on the sample data provided by issuing the following command:
 
 ```
 
+---
+
 Generating a CSV report
 ----
 
@@ -44,6 +48,11 @@ A sample VCF file is provided, `abe.vcf`, that you can do a test run on:
 
 ```
 $ ./src/clinvar-report.py -C data/clinvar.vcf -i data/abe.vcf
+```
+
+Which will produce output like the following:
+
+```
 Chromosome,Position,Name,Significance,Frequency,Zygosity,ACC URL
 1,45444038,not_specified,other,0.2965,Het,http://www.ncbi.nlm.nih.gov/clinvar/RCV000081999.4
 1,46660295,not_specified,other,0.3335,Het,http://www.ncbi.nlm.nih.gov/clinvar/RCV000081805.4
