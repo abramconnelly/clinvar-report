@@ -477,7 +477,6 @@ def match_to_clinvar(genome_file, clin_file):
             break
 
 def main():
-    # Parse options
     parser = ArgumentParser()
 
     parser.add_argument("-C", "--clinvar", dest="clinvar",
@@ -541,25 +540,21 @@ def main():
             ele["pos"] = var[1]
             ele["ref_allele"] = var[2]
             ele["alt_allele"] = var[3]
-            ele["namm_acc"] = var[4]
             ele["freq"] = var[5]
             ele["zygosity"] = var[6]
-
-
 
             url = "http://www.ncbi.nlm.nih.gov/clinvar/" + str(spec[0])
             name = spec[1]
             clnsig = spec[2]
 
+            ele["acc_url"] = url
             ele["name"] = name
             ele["clinical_significance"] = clnsig
 
             json_report["report"].append( ele )
 
-            # analysis_in.variants.add(variant)
-            # for CSV output
-            data = (chrom, pos, name, clnsig, freq, zygosity, url)
             if output_format == "csv":
+              data = (chrom, pos, name, clnsig, freq, zygosity, url)
               csv_out.writerow(data)
 
     if output_format == "json":
