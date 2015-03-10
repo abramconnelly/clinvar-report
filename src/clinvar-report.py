@@ -24,6 +24,13 @@ CHROM_INDEX = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5,
                "chr21": 21, "chr22": 22, "chrX": 23, "chrY": 24, "chrM": 25,
                }
 
+REV_CHROM_INDEX = { 1  : "chr1",   2 : "chr2",   3  : "chr3",  4 : "chr4",   5 : "chr5",
+                    6  : "chr6",   7 : "chr7",   8  : "chr8",  9 : "chr9",  10 : "chr10",
+                    11 : "chr11", 12 : "chr12", 13 : "chr13", 14 : "chr14", 15 : "chr15",
+                    16 : "chr16", 17 : "chr17", 18 : "chr18", 19 : "chr19", 20 : "chr20",
+                    21 : "chr21", 22 : "chr22", 23 : "chrX",  24 : "chrY",  25 : "chrM",
+                    }
+
 CLNSIG_INDEX = {0: "unknown",
                 1: "untested",
                 2: "non-pathogenic",
@@ -536,7 +543,7 @@ def main():
 
         for spec in name_acc:
             ele = {}
-            ele["chrom"] = var[0]
+            ele["chrom"] = REV_CHROM_INDEX[var[0]]
             ele["pos"] = var[1]
             ele["ref_allele"] = var[2]
             ele["alt_allele"] = var[3]
