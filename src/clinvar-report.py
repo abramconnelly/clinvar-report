@@ -492,6 +492,12 @@ def main():
                       help="Input VCF file", metavar="INPUT")
     parser.add_argument("-F", "--output-format", dest="format",
                       help="Output format (currently 'csv' or 'json')", metavar="FORMAT")
+    parser.add_argument("-V", "--schema-version", dest="schema_version",
+                      help="Version to include report (JSON only)", metavar="OUTVERSION")
+    parser.add_argument("-n", "--notes", dest="notes",
+                      help="Notes to include in report (JSON only)", metavar="NOTES")
+    parser.add_argument("-g", "--genome-build", dest="build",
+                      help="Genome build to include in report (JSON only)", metavar="GENOMEBUILD")
     options = parser.parse_args()
 
     if sys.stdin.isatty():
@@ -525,9 +531,20 @@ def main():
                 "Zygosity", "ACC URL")
       csv_out.writerow(header)
 
+    metadata = {}
+    metadata["notes"] = options.clinvar
+
+    build = "unknown"
+    if options.build:
+      build = options.build
+    metadata["genome_build"] = build
+
     json_report = {}
-    json_report["clinvar"] = options.clinvar
-    json_report["report"] = []
+    json_report["schema_version"] = options.schema_version
+    json_report["notes"] = options.notes
+    json_report["metadata"] = metadata
+    json_report["variants"] = []
+
 
 
     matching = match_to_clinvar(input_genome_file, input_clinvar_file)
@@ -547,7 +564,7 @@ def main():
             ele["pos"] = var[1]
             ele["ref_allele"] = var[2]
             ele["alt_allele"] = var[3]
-            ele["freq"] = var[5]
+            ele["allele_freq"] = var[5]
             ele["zygosity"] = var[6]
 
             url = "http://www.ncbi.nlm.nih.gov/clinvar/" + str(spec[0])
@@ -558,7 +575,7 @@ def main():
             ele["name"] = name
             ele["clinical_significance"] = clnsig
 
-            json_report["report"].append( ele )
+            json_report["variants"].append( ele )
 
             if output_format == "csv":
               data = (chrom, pos, name, clnsig, freq, zygosity, url)
