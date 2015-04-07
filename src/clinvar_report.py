@@ -5,10 +5,7 @@
 import json
 import re
 import sys
-
 import csv
-
-import sys
 from argparse import ArgumentParser
 
 # Don't stack dump on keyboard ctrl-c or on premature
@@ -16,38 +13,41 @@ from argparse import ArgumentParser
 # through head).
 #
 from signal import signal, SIGPIPE, SIGINT, SIG_DFL
-signal(SIGPIPE,SIG_DFL)
-signal(SIGINT,SIG_DFL)
+signal(SIGPIPE, SIG_DFL)
+signal(SIGINT, SIG_DFL)
 
 
-CHROM_INDEX = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5,
-               "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
-               "11": 11, "12": 12, "13": 13, "14": 14, "15": 15,
-               "16": 16, "17": 17, "18": 18, "19": 19, "20": 20,
-               "21": 21, "22": 22, "X": 23, "Y": 24, "M": 25, "MT": 25,
-               "chr1": 1, "chr2": 2, "chr3": 3, "chr4": 4, "chr5": 5,
-               "chr6": 6, "chr7": 7, "chr8": 8, "chr9": 9, "chr10": 10,
-               "chr11": 11, "chr12": 12, "chr13": 13, "chr14": 14, "chr15": 15,
-               "chr16": 16, "chr17": 17, "chr18": 18, "chr19": 19, "chr20": 20,
-               "chr21": 21, "chr22": 22, "chrX": 23, "chrY": 24, "chrM": 25,
-               }
+CHROM_INDEX = {
+    "1": 1, "2": 2, "3": 3, "4": 4, "5": 5,
+    "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
+    "11": 11, "12": 12, "13": 13, "14": 14, "15": 15,
+    "16": 16, "17": 17, "18": 18, "19": 19, "20": 20,
+    "21": 21, "22": 22, "X": 23, "Y": 24, "M": 25, "MT": 25,
+    "chr1": 1, "chr2": 2, "chr3": 3, "chr4": 4, "chr5": 5,
+    "chr6": 6, "chr7": 7, "chr8": 8, "chr9": 9, "chr10": 10,
+    "chr11": 11, "chr12": 12, "chr13": 13, "chr14": 14, "chr15": 15,
+    "chr16": 16, "chr17": 17, "chr18": 18, "chr19": 19, "chr20": 20,
+    "chr21": 21, "chr22": 22, "chrX": 23, "chrY": 24, "chrM": 25,
+}
 
-REV_CHROM_INDEX = { 1  : "chr1",   2 : "chr2",   3  : "chr3",  4 : "chr4",   5 : "chr5",
-                    6  : "chr6",   7 : "chr7",   8  : "chr8",  9 : "chr9",  10 : "chr10",
-                    11 : "chr11", 12 : "chr12", 13 : "chr13", 14 : "chr14", 15 : "chr15",
-                    16 : "chr16", 17 : "chr17", 18 : "chr18", 19 : "chr19", 20 : "chr20",
-                    21 : "chr21", 22 : "chr22", 23 : "chrX",  24 : "chrY",  25 : "chrM",
-                    }
+REV_CHROM_INDEX = {
+    1: "chr1", 2: "chr2", 3: "chr3", 4: "chr4", 5: "chr5",
+    6: "chr6", 7: "chr7", 8: "chr8", 9: "chr9", 10: "chr10",
+    11: "chr11", 12: "chr12", 13: "chr13", 14: "chr14", 15: "chr15",
+    16: "chr16", 17: "chr17", 18: "chr18", 19: "chr19", 20: "chr20",
+    21: "chr21", 22: "chr22", 23: "chrX", 24: "chrY", 25: "chrM",
+}
 
-CLNSIG_INDEX = {0: "unknown",
-                1: "untested",
-                2: "non-pathogenic",
-                3: "probably non-pathogenic",
-                4: "probably pathogenic",
-                5: "pathogenic",
-                6: "affecting drug response",
-                7: "affecting histocompatibility",
-                255: "other"}
+CLNSIG_INDEX = {
+    0: "unknown",
+    1: "untested",
+    2: "non-pathogenic",
+    3: "probably non-pathogenic",
+    4: "probably pathogenic",
+    5: "pathogenic",
+    6: "affecting drug response",
+    7: "affecting histocompatibility",
+    255: "other"}
 
 
 class ClinVarRecord(object):
@@ -65,6 +65,7 @@ class ClinVarRecord(object):
         return json.dumps(self.as_dict(), ensure_ascii=True)
 
     def as_dict(self):
+        """Return ClinVarRecord data as dict object."""
         return {'dsdb': self.dsdb,
                 'acc': self.acc,
                 'dbn': self.dbn,
@@ -449,7 +450,7 @@ def match_to_clinvar(genome_file, clin_file):
                              str(genome_vcf_line))
 
         # Match only if ClinVar and Genome ref_alleles match.
-        if not (genome_vcf_line.ref_allele == clinvar_vcf_line.ref_allele):
+        if not genome_vcf_line.ref_allele == clinvar_vcf_line.ref_allele:
             try:
                 genome_curr_line = genome_file.next()
                 clin_curr_line = clin_file.next()
@@ -492,68 +493,76 @@ def match_to_clinvar(genome_file, clin_file):
             break
 
 def main():
+    """
+    Parse command line argument and
+    output appropriate file type (csv or JSON)
+    """
     parser = ArgumentParser()
 
     parser.add_argument("-C", "--clinvar", dest="clinvar",
-                      help="ClinVar VCF file", metavar="CLINVAR")
+        help="ClinVar VCF file", metavar="CLINVAR")
     parser.add_argument("-i", "--input", dest="inputfile",
-                      help="Input VCF file", metavar="INPUT")
+        help="Input VCF file", metavar="INPUT")
     parser.add_argument("-F", "--output-format", dest="format",
-                      help="Output format (currently 'csv' or 'json')", metavar="FORMAT")
+        help="Output format (currently 'csv' or 'json')",
+        metavar="FORMAT")
     parser.add_argument("-V", "--schema-version", dest="schema_version",
-                      help="Version to include report (JSON only)", metavar="OUTVERSION")
+        help="Version to include report (JSON only)",
+        metavar="OUTVERSION")
     parser.add_argument("-n", "--notes", dest="notes",
-                      help="Notes, as a JSON string,  to include in report (JSON only)", metavar="NOTES")
+        help="Notes, as a JSON string, to include in report (JSON only)",
+        metavar="NOTES")
     parser.add_argument("-g", "--genome-build", dest="build",
-                      help="Genome build to include in report (JSON only)", metavar="GENOMEBUILD")
+        help="Genome build to include in report (JSON only)",
+        metavar="GENOMEBUILD")
     options = parser.parse_args()
 
     if sys.stdin.isatty():
         if options.inputfile:
-          input_genome_file = open(options.inputfile)
+            input_genome_file = open(options.inputfile)
         else:
-          sys.stderr.write("Provide input VCF file\n")
-          parser.print_help()
-          sys.exit(1)
+            sys.stderr.write("Provide input VCF file\n")
+            parser.print_help()
+            sys.exit(1)
         input_genome_file = open(options.inputfile)
     else:
         input_genome_file = sys.stdin
 
     if options.clinvar:
-      input_clinvar_file = open(options.clinvar)
+        input_clinvar_file = open(options.clinvar)
     else:
-      sys.stderr.write("Provide ClinVar VCF file\n")
-      parser.print_help()
-      sys.exit(1)
+        sys.stderr.write("Provide ClinVar VCF file\n")
+        parser.print_help()
+        sys.exit(1)
 
     output_format = "csv"
     if options.format:
-      if options.format == "csv":
-        output_format = "csv"
-      elif options.format == "json":
-        output_format = "json"
+        if options.format == "csv":
+            output_format = "csv"
+        elif options.format == "json":
+            output_format = "json"
 
     if output_format == "csv":
-      csv_out = csv.writer( sys.stdout )
-      header = ("Chromosome", "Position", "Name", "Significance", "Frequency",
-                "Zygosity", "ACC URL")
-      csv_out.writerow(header)
+        csv_out = csv.writer(sys.stdout)
+        header = ("Chromosome", "Position", "Name", "Significance", "Frequency",
+                  "Zygosity", "ACC URL")
+        csv_out.writerow(header)
 
     metadata = {}
     metadata["notes"] = options.clinvar
 
     build = "unknown"
     if options.build:
-      build = options.build
+        build = options.build
     metadata["genome_build"] = build
 
     notes_json = {}
     if options.notes:
-      notes_json["parameter"] = options.notes
-      try:
-        notes_json = json.loads( options.notes )
-      except:
-        sys.stderr.write("Could not parse JSON notes field\n")
+        notes_json["parameter"] = options.notes
+        try:
+            notes_json = json.loads(options.notes)
+        except:
+            sys.stderr.write("Could not parse JSON notes field\n")
 
     json_report = {}
     json_report["schema_version"] = options.schema_version
@@ -571,17 +580,17 @@ def main():
         ref_allele = var[2]
         alt_allele = var[3]
         name_acc = var[4]
-        freq = var[5]
+        allele_freq = var[5]
         zygosity = var[6]
 
         for spec in name_acc:
             ele = {}
-            ele["chrom"] = REV_CHROM_INDEX[var[0]]
-            ele["pos"] = var[1]
-            ele["ref_allele"] = var[2]
-            ele["alt_allele"] = var[3]
-            ele["allele_freq"] = var[5]
-            ele["zygosity"] = var[6]
+            ele["chrom"] = REV_CHROM_INDEX[chrom]
+            ele["pos"] = pos
+            ele["ref_allele"] = ref_allele
+            ele["alt_allele"] = alt_allele
+            ele["allele_freq"] = allele_freq
+            ele["zygosity"] = zygosity
 
             url = "http://www.ncbi.nlm.nih.gov/clinvar/" + str(spec[0])
             name = spec[1]
@@ -591,14 +600,14 @@ def main():
             ele["name"] = name
             ele["clinical_significance"] = clnsig
 
-            json_report["variants"].append( ele )
+            json_report["variants"].append(ele)
 
             if output_format == "csv":
-              data = (chrom, pos, name, clnsig, freq, zygosity, url)
-              csv_out.writerow(data)
+                data = (chrom, pos, name, clnsig, allele_freq, zygosity, url)
+                csv_out.writerow(data)
 
     if output_format == "json":
-      print json.dumps( json_report )
+        print json.dumps(json_report)
 
 
 if __name__ == "__main__":
