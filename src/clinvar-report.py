@@ -11,6 +11,14 @@ import csv
 import sys
 from argparse import ArgumentParser
 
+# Don't stack dump on keyboard ctrl-c or on premature
+# termination of output stream (say from piping output
+# through head).
+#
+from signal import signal, SIGPIPE, SIGINT, SIG_DFL
+signal(SIGPIPE,SIG_DFL)
+signal(SIGINT,SIG_DFL)
+
 
 CHROM_INDEX = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5,
                "6": 6, "7": 7, "8": 8, "9": 9, "10": 10,
@@ -495,7 +503,7 @@ def main():
     parser.add_argument("-V", "--schema-version", dest="schema_version",
                       help="Version to include report (JSON only)", metavar="OUTVERSION")
     parser.add_argument("-n", "--notes", dest="notes",
-                      help="Notes to include in report (JSON only)", metavar="NOTES")
+                      help="Notes, as a JSON string,  to include in report (JSON only)", metavar="NOTES")
     parser.add_argument("-g", "--genome-build", dest="build",
                       help="Genome build to include in report (JSON only)", metavar="GENOMEBUILD")
     options = parser.parse_args()
@@ -539,9 +547,17 @@ def main():
       build = options.build
     metadata["genome_build"] = build
 
+    notes_json = {}
+    if options.notes:
+      notes_json["parameter"] = options.notes
+      try:
+        notes_json = json.loads( options.notes )
+      except:
+        sys.stderr.write("Could not parse JSON notes field\n")
+
     json_report = {}
     json_report["schema_version"] = options.schema_version
-    json_report["notes"] = options.notes
+    json_report["notes"] = notes_json
     json_report["metadata"] = metadata
     json_report["variants"] = []
 

@@ -5,7 +5,7 @@
   "properties": {
 
     "schema_version" : { "type" : "string" },
-    "notes" : { "type" : "string" },
+    "notes" : { "type" : "object" },
 
     "metadata" : {
       "type" : "object",
