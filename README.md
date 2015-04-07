@@ -1,4 +1,4 @@
-clinvar-report
+clinvar_report
 ===
 
 Generate a report based on the ClinVar variant database.
@@ -33,7 +33,7 @@ decompressing...
 Assuming the clinvar.vcf file is downloaded and ready, you can generate a test
 report on the sample data provided by issuing the following command:
 
-  ./src/clinvar-report.py -C data/clinvar.vcf -i data/abe.vcf
+  ./src/clinvar_report.py -C data/clinvar.vcf -i data/abe.vcf
 
 ********************************************************************************
 
@@ -47,7 +47,7 @@ Generating a CSV report
 A sample VCF file is provided, `abe.vcf`, that you can do a test run on:
 
 ```
-$ ./src/clinvar-report.py -C data/clinvar.vcf -i data/abe.vcf
+$ ./src/clinvar_report.py -C data/clinvar.vcf -i data/abe.vcf
 ```
 
 Which will produce output like the following:
