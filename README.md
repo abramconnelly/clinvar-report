@@ -66,4 +66,8 @@ Chromosome,Position,Name,Significance,Frequency,Zygosity,ACC URL
 ...
 ```
 
+License 
+---
+
+See the [LICENSE.txt](LICENSE.TXT) for details.  The VCF file, [abe.vcf](data/abe.vcf) (and [abe-sample-report.json](data/abe-sample-report.json)) are provided under a CC0 license.
 
